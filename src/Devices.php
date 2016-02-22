@@ -41,6 +41,18 @@ class Devices
     }
 
     /**
+     * Get Notifications for a device.
+     *
+     * @param string $id Device ID
+     *
+     * @return \GuzzleHttp\Message\Response
+     */
+    public function getWebNotifications($id)
+    {
+        return $this->api->request('GET', '/players/' . $id . '/chromeweb_notification');
+    }
+
+    /**
      * Get information about all registered devices for your application.
      *
      * Application auth key must be set.
