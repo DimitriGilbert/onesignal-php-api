@@ -8,6 +8,9 @@
 [![StyleCI](https://styleci.io/repos/34352212/shield?style=flat)](https://styleci.io/repos/34352212)
 [![License](https://poser.pugx.org/norkunas/onesignal-php-api/license)](https://packagist.org/packages/norkunas/onesignal-php-api)
 
+## Original Author
+This is a fork from [Norkunas](https://github.com/norkunas/onesignal-php-api). I forked it to answer a particular problem of mine (namely, being able to fetch notifications for the server) that is not documented in the API. All credit goes to the real authorand you should use his package instead as it'll probable be better maintained.
+
 ## Install using Composer
 
 ```
