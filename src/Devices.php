@@ -101,7 +101,7 @@ class Devices
                     self::AMAZON,
                     self::WINDOWS_PHONE,
                     self::CHROME_APP,
-                    self::CHORME_WEB,
+                    self::CHROME_WEB,
                     self::WINDOWS_PHONE2,
                     self::SAFARI,
                     self::FIREFOX
