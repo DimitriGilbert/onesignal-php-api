@@ -100,6 +100,10 @@ class OneSignal
     public function request($method, $uri, array $headers = [], $body = null)
     {
         try {
+            if (!isset($headers['Content-Type']))
+            {
+                $headers['Content-Type'] = 'application/json'
+            }
             $response = $this->client->send($method, self::API_URL.$uri, $headers, $body);
 
             return json_decode($response->getBody(), true);
