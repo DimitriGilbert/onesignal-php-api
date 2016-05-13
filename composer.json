@@ -1,5 +1,5 @@
 {
-    "name": "d2g/onesignal-php-api",
+    "name": "giift/onesignal-php-api",
     "description": "OneSignal API for PHP",
     "keywords": ["onesignal", "api"],
     "license": "MIT",
