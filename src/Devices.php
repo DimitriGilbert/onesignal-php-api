@@ -12,9 +12,10 @@ class Devices
     const ANDROID = 1;
     const AMAZON = 2;
     const WINDOWS_PHONE = 3;
+    const WINDOWS_PHONE_MPNS = 3;
     const CHROME_APP = 4;
     const CHROME_WEB = 5;
-    const WINDOWS_PHONE2 = 6;
+    const WINDOWS_PHONE_WNS = 6;
     const SAFARI = 7;
     const FIREFOX = 8;
 
@@ -69,17 +70,14 @@ class Devices
      */
     public function getAll($limit = self::DEVICES_LIMIT, $offset = 0)
     {
-        return $this->api->request('GET', '/players?' . http_build_query([
+        return $this->api->request('GET', '/players?'.http_build_query([
             'limit' => max(0, min(self::DEVICES_LIMIT, filter_var($limit, FILTER_VALIDATE_INT))),
             'offset' => max(0, min(self::DEVICES_LIMIT, filter_var($offset, FILTER_VALIDATE_INT))),
         ]), [
-            'headers' => [
-                'Authorization' => 'Basic ' . $this->api->getConfig()->getApplicationAuthKey(),
-            ],
-            'json' => [
-                'app_id' => $this->api->getConfig()->getApplicationId(),
-            ],
-        ]);
+            'Authorization' => 'Basic '.$this->api->getConfig()->getApplicationAuthKey(),
+        ], json_encode([
+            'app_id' => $this->api->getConfig()->getApplicationId(),
+        ]));
     }
 
     /**
@@ -100,20 +98,18 @@ class Devices
                     self::ANDROID,
                     self::AMAZON,
                     self::WINDOWS_PHONE,
+                    self::WINDOWS_PHONE_MPNS,
                     self::CHROME_APP,
                     self::CHROME_WEB,
-                    self::WINDOWS_PHONE2,
+                    self::WINDOWS_PHONE_WNS,
                     self::SAFARI,
-                    self::FIREFOX
+                    self::FIREFOX,
                 ]);
         });
 
         return $this->api->request('POST', '/players', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $data,
-        ]);
+            'Content-Type' => 'application/json',
+        ], json_encode($data));
     }
 
     /**
@@ -126,14 +122,16 @@ class Devices
      */
     public function update($id, array $data)
     {
-        $data = $this->resolve($data);
+        $data = $this->resolve($data, function (OptionsResolver $resolver) {
+            $resolver
+                ->setDefined('notification_types')
+                ->setAllowedTypes('notification_types', 'int')
+                ->setAllowedValues('notification_types', [1, -2]);
+        });
 
-        return $this->api->request('PUT', '/players/' . $id, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $data,
-        ]);
+        return $this->api->request('PUT', '/players/'.$id, [
+            'Content-Type' => 'application/json',
+        ], json_encode($data));
     }
 
     /**
@@ -163,12 +161,9 @@ class Devices
             ->setAllowedTypes('sdk', 'string')
             ->resolve($data);
 
-        return $this->api->request('PUT', '/players/' . $id . '/on_session', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $data,
-        ]);
+        return $this->api->request('PUT', '/players/'.$id.'/on_session', [
+            'Content-Type' => 'application/json',
+        ], json_encode($data));
     }
 
     /**
@@ -199,12 +194,9 @@ class Devices
                 ->resolve($purchase);
         }
 
-        return $this->api->request('PUT', '/players/' . $id . '/on_purchase', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $data,
-        ]);
+        return $this->api->request('PUT', '/players/'.$id.'/on_purchase', [
+            'Content-Type' => 'application/json',
+        ], json_encode($data));
     }
 
     /**
@@ -223,12 +215,9 @@ class Devices
             ->setAllowedTypes('active_time', 'int')
             ->resolve($data);
 
-        return $this->api->request('PUT', '/players/' . $id . '/on_focus', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $data,
-        ]);
+        return $this->api->request('PUT', '/players/'.$id.'/on_focus', [
+            'Content-Type' => 'application/json',
+        ], json_encode($data));
     }
 
     /**
@@ -241,13 +230,10 @@ class Devices
     public function csvExport()
     {
         return $this->api->request('POST', '/players/csv_export', [
-            'headers' => [
-                'Authorization' => 'Basic ' . $this->api->getConfig()->getApplicationAuthKey(),
-            ],
-            'json' => [
-                'app_id' => $this->api->getConfig()->getApplicationId(),
-            ],
-        ]);
+            'Authorization' => 'Basic '.$this->api->getConfig()->getApplicationAuthKey(),
+        ], json_encode([
+            'app_id' => $this->api->getConfig()->getApplicationId(),
+        ]));
     }
 
     protected function resolve(array $data, callable $callback = null)
@@ -289,6 +275,9 @@ class Devices
             ->setAllowedTypes('badge_count', 'int')
             ->setDefined('last_active')
             ->setAllowedTypes('last_active', 'int')
+            ->setDefined('test_type')
+            ->setAllowedTypes('test_type', 'int')
+            ->setAllowedValues('test_type', [1, 2])
             ->setDefault('app_id', $this->api->getConfig()->getApplicationId());
 
         return $resolver->resolve($data);

@@ -6,16 +6,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Apps
 {
-    /**
-     * @var OneSignal
-     */
     protected $api;
 
-    /**
-     * Constructor.
-     *
-     * @param OneSignal $api
-     */
     public function __construct(OneSignal $api)
     {
         $this->api = $api;
@@ -32,10 +24,8 @@ class Apps
      */
     public function getOne($id)
     {
-        return $this->api->request('GET', '/apps/' . $id, [
-            'headers' => [
-                'Authorization' => 'Basic ' . $this->api->getConfig()->getUserAuthKey(),
-            ],
+        return $this->api->request('GET', '/apps/'.$id, [
+            'Authorization' => 'Basic '.$this->api->getConfig()->getUserAuthKey(),
         ]);
     }
 
@@ -49,9 +39,7 @@ class Apps
     public function getAll()
     {
         return $this->api->request('GET', '/apps', [
-            'headers' => [
-                'Authorization' => 'Basic ' . $this->api->getConfig()->getUserAuthKey(),
-            ],
+            'Authorization' => 'Basic '.$this->api->getConfig()->getUserAuthKey(),
         ]);
     }
 
@@ -69,12 +57,9 @@ class Apps
         $data = $this->resolve($data);
 
         return $this->api->request('POST', '/apps', [
-            'headers' => [
-                'Authorization' => 'Basic ' . $this->api->getConfig()->getUserAuthKey(),
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $data,
-        ]);
+            'Authorization' => 'Basic '.$this->api->getConfig()->getUserAuthKey(),
+            'Content-Type' => 'application/json',
+        ], json_encode($data));
     }
 
     /**
@@ -85,33 +70,64 @@ class Apps
      * @param string $id   ID of your application
      * @param array  $data New application data
      *
-     * @return \GuzzleHttp\Message\Response
+     * @return array
      */
     public function update($id, array $data)
     {
         $data = $this->resolve($data);
 
-        return $this->api->request('PUT', '/apps/' . $id, [
-            'headers' => [
-                'Authorization' => 'Basic ' . $this->api->getConfig()->getUserAuthKey(),
-                'Content-Type' => 'application/json',
-            ],
-            'json' => $data,
-        ]);
+        return $this->api->request('PUT', '/apps/'.$id, [
+            'Authorization' => 'Basic '.$this->api->getConfig()->getUserAuthKey(),
+            'Content-Type' => 'application/json',
+        ], json_encode($data));
     }
 
     protected function resolve(array $data)
     {
         $resolver = new OptionsResolver();
 
-        $resolver->setRequired('name');
-        $resolver->setAllowedTypes('name', 'string');
-        $resolver->setDefined(['apns_env', 'apns_p12', 'apns_p12_password', 'gcm_key']);
-        $resolver->setAllowedTypes('apns_env', 'string');
-        $resolver->setAllowedValues('apns_env', ['sandbox', 'production']);
-        $resolver->setAllowedTypes('apns_p12', 'string');
-        $resolver->setAllowedTypes('apns_p12_password', 'string');
-        $resolver->setAllowedTypes('gcm_key', 'string');
+        $resolver
+            ->setRequired('name')
+            ->setAllowedTypes('name', 'string')
+            ->setDefined('apns_env')
+            ->setAllowedTypes('apns_env', 'string')
+            ->setAllowedValues('apns_env', ['sandbox', 'production'])
+            ->setDefined('apns_p12')
+            ->setAllowedTypes('apns_p12', 'string')
+            ->setDefined('apns_p12_password')
+            ->setAllowedTypes('apns_p12_password', 'string')
+            ->setDefined('gcm_key')
+            ->setAllowedTypes('gcm_key', 'string')
+            ->setDefined('chrome_key')
+            ->setAllowedTypes('chrome_key', 'string')
+            ->setDefined('safari_apns_p12')
+            ->setAllowedTypes('safari_apns_p12', 'string')
+            ->setDefined('chrome_web_key')
+            ->setAllowedTypes('chrome_web_key', 'string')
+            ->setDefined('safari_apns_p12_password')
+            ->setAllowedTypes('safari_apns_p12_password', 'string')
+            ->setDefined('site_name')
+            ->setAllowedTypes('site_name', 'string')
+            ->setDefined('safari_site_origin')
+            ->setAllowedTypes('safari_site_origin', 'string')
+            ->setDefined('safari_icon_16_16')
+            ->setAllowedTypes('safari_icon_16_16', 'string')
+            ->setDefined('safari_icon_32_32')
+            ->setAllowedTypes('safari_icon_32_32', 'string')
+            ->setDefined('safari_icon_64_64')
+            ->setAllowedTypes('safari_icon_64_64', 'string')
+            ->setDefined('safari_icon_128_128')
+            ->setAllowedTypes('safari_icon_128_128', 'string')
+            ->setDefined('safari_icon_256_256')
+            ->setAllowedTypes('safari_icon_256_256', 'string')
+            ->setDefined('chrome_web_origin')
+            ->setAllowedTypes('chrome_web_origin', 'string')
+            ->setDefined('chrome_web_gcm_sender_id')
+            ->setAllowedTypes('chrome_web_gcm_sender_id', 'string')
+            ->setDefined('chrome_web_default_notification_icon')
+            ->setAllowedTypes('chrome_web_default_notification_icon', 'string')
+            ->setDefined('chrome_web_sub_domain')
+            ->setAllowedTypes('chrome_web_sub_domain', 'string');
 
         return $resolver->resolve($data);
     }
