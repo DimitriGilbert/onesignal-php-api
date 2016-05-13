@@ -102,7 +102,7 @@ class OneSignal
         try {
             if (!isset($headers['Content-Type']))
             {
-                $headers['Content-Type'] = 'application/json'
+                $headers['Content-Type'] = 'application/json';
             }
             $response = $this->client->send($method, self::API_URL.$uri, $headers, $body);
 
